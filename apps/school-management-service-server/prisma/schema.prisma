@@ -1,0 +1,92 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Student {
+  abscences    Abscence[]
+  createdAt    DateTime         @default(now())
+  dob          DateTime?
+  email        String?
+  id           String           @id @default(cuid())
+  major        Major?           @relation(fields: [majorId], references: [id])
+  majorId      String?
+  marksItems   Marks[]
+  name         String?
+  password     String?
+  remarksItems Remarks[]
+  role         EnumStudentRole?
+  updatedAt    DateTime         @updatedAt
+}
+
+model Teacher {
+  createdAt DateTime         @default(now())
+  email     String?
+  id        String           @id @default(cuid())
+  name      String?
+  password  String?
+  role      EnumTeacherRole?
+  updatedAt DateTime         @updatedAt
+}
+
+model Major {
+  createdAt   DateTime  @default(now())
+  description String?
+  id          String    @id @default(cuid())
+  name        String?
+  students    Student[]
+  updatedAt   DateTime  @updatedAt
+}
+
+model Abscence {
+  createdAt DateTime  @default(now())
+  date      DateTime?
+  id        String    @id @default(cuid())
+  reason    String?
+  student   Student?  @relation(fields: [studentId], references: [id])
+  studentId String?
+  updatedAt DateTime  @updatedAt
+}
+
+model Marks {
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  score     Float?
+  student   Student? @relation(fields: [studentId], references: [id])
+  studentId String?
+  subject   String?
+  updatedAt DateTime @updatedAt
+}
+
+model Remarks {
+  comment   String?
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  student   Student? @relation(fields: [studentId], references: [id])
+  studentId String?
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
+
+enum EnumStudentRole {
+  Option1
+}
+
+enum EnumTeacherRole {
+  Option1
+}
